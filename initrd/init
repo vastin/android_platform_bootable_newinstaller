@@ -83,7 +83,7 @@ check_root()
 		rm -rf *
 		return 1
 	fi
-	mkdir cache mnt mnt/sdcard
+	mkdir cache mnt mnt/sdcard mnt/udisk
 	mount -t tmpfs tmpfs cache
 	echo " found at $1"
 }
@@ -111,7 +111,9 @@ echo -n Detecting Android-x86...
 mount -t tmpfs tmpfs /android
 cd /android
 while :; do
-	for device in ${ROOT:-/dev/sr* /dev/[hs]d[a-z]*}; do
+#	for device in ${ROOT:-/dev/sr* /dev/[hs]d[a-z]*}; do
+	sleep 3
+	for device in ${ROOT:-/dev/sda[1-4] /dev/mmcblk0p[1-4] /dev/sr*}; do
 		check_root $device && break 2
 		mountpoint -q /mnt && umount /mnt
 	done
@@ -129,7 +131,7 @@ if [ -n "$INSTALL" ]; then
 	zcat /src/install.img | cpio -iud > /dev/null
 fi
 
-if [ -x system/bin/ln -a \( -n "$DEBUG" -o -n "$BUSYBOX" \) ]; then
+#if [ -x system/bin/ln -a \( -n "$DEBUG" -o -n "$BUSYBOX" \) ]; then
 	mv /bin /lib .
 	system/bin/ln -s android/lib /lib
 	system/bin/ln -s android/bin /bin
@@ -137,7 +139,7 @@ if [ -x system/bin/ln -a \( -n "$DEBUG" -o -n "$BUSYBOX" \) ]; then
 	mv /sbin/* sbin
 	rmdir /sbin
 	ln -s android/sbin /
-fi
+#fi
 
 # ensure keyboard driver is loaded
 [ -n "$INSTALL" -o -n "$DEBUG" ] && modprobe atkbd

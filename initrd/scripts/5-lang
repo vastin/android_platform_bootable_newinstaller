@@ -1,0 +1,1 @@
+[ -n "$LANG" ] && echo persist.sys.language=$LANG >> default.prop
